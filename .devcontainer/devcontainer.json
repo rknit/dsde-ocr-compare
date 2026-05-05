@@ -4,7 +4,7 @@
 	"image": "mcr.microsoft.com/devcontainers/python:1-3.11-bookworm",
 	"customizations": {
 		"codespaces": {
-			"openFiles": ["README.md", "compare.py"]
+			"openFiles": ["README.md", "combined.py"]
 		},
 		"vscode": {
 			"settings": {},
