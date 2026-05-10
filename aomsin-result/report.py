@@ -5,14 +5,18 @@ from pathlib import Path
 
 BASE = Path(__file__).parent
 
+_CANDIDATE_FORMS = ("form_5_18", "form_5_17", "form_5_16")
+_PARTY_FORMS     = ("form_5_18_bch", "form_5_17_bch", "form_5_16_bch")
+
 
 def aggregate_candidates():
     totals = defaultdict(int)
     files = sorted(glob.glob(str(BASE / "**" / "*.json"), recursive=True))
     for filepath in files:
         data = json.loads(Path(filepath).read_text(encoding="utf-8"))
-        for num_str, votes in data.get("form_5_18", {}).get("candidates", {}).items():
-            totals[int(num_str)] += votes
+        for form_key in _CANDIDATE_FORMS:
+            for num_str, votes in data.get(form_key, {}).get("candidates", {}).items():
+                totals[int(num_str)] += votes
     return totals, len(files)
 
 
@@ -21,8 +25,11 @@ def aggregate_parties():
     files = sorted(glob.glob(str(BASE / "**" / "*.json"), recursive=True))
     for filepath in files:
         data = json.loads(Path(filepath).read_text(encoding="utf-8"))
-        for num_str, votes in data.get("form_5_18_bch", {}).get("candidates", {}).items():
-            totals[int(num_str)] += votes
+        for form_key in _PARTY_FORMS:
+            form_data = data.get(form_key, {})
+            votes_dict = form_data.get("candidates") or form_data.get("parties") or {}
+            for num_str, votes in votes_dict.items():
+                totals[int(num_str)] += votes
     return totals, len(files)
 
 
